@@ -1,0 +1,106 @@
+{% extends 'catalog/index.html' %}
+{% load static %}
+
+{% block title %}
+    {{ title|default:"Форма категории" }}
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    {% if category %}
+                        <i class="bi bi-pencil"></i> Редактировать категорию
+                    {% else %}
+                        <i class="bi bi-plus-circle"></i> Добавить категорию
+                    {% endif %}
+                </h4>
+            </div>
+
+            <div class="card-body p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label fw-bold">
+                                {{ form.name.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.name.errors }}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">{{ form.name.help_text }}</small>
+                        </div>
+
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label">{{ form.description.label }}</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.description.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-12 mb-4">
+                            <div class="form-check">
+                                {{ form.is_active }}
+                                <label class="form-check-label fw-bold">
+                                    {{ form.is_active.label }}
+                                </label>
+                                {% if form.is_active.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.is_active.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid d-md-flex gap-2 justify-content-md-end">
+                        <a href="{% url 'catalog:category_list' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Отмена
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i>
+                            {% if category %}Сохранить{% else %}Создать{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if category %}
+        <div class="card mt-4 bg-light">
+            <div class="card-body">
+                <div class="row text-muted">
+                    <div class="col-md-6">
+                        <strong>ID:</strong> {{ category.id }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Slug:</strong> <code>{{ category.slug }}</code>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Создано:</strong> {{ category.created_at|date:"d.m.Y H:i" }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Обновлено:</strong> {{ category.updated_at|date:"d.m.Y H:i" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'catalog/index.html' %}
+
+{% block title %}Удалить категорию - {{ category.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-8">
+        <div class="card border-0 shadow-lg">
+            <div class="card-header bg-gradient-danger text-white text-center py-5 position-relative overflow-hidden">
+                <div class="position-absolute top-0 start-50 translate-middle-x" 
+                     style="font-size: 6rem; opacity: 0.1;">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div>
+                    <i class="bi bi-trash3-fill display-1 mb-3"></i>
+                    <h2 class="mb-0 fw-bold">Удаление категории</h2>
+                </div>
+            </div>
+
+            <div class="card-body p-5">
+                <div class="text-center mb-5">
+                    <h3 class="text-danger mb-3">{{ category.name }}</h3>
+                    <div class="row justify-content-center text-muted g-3">
+                        <div class="col-auto">
+                            <i class="bi bi-link-45deg"></i> 
+                            <code class="small">{{ category.slug }}</code>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-calendar"></i> 
+                            {{ category.created_at|date:"d.m.Y" }}
+                        </div>
+                        {% if category.description %}
+                        <div class="col-12">
+                            <i class="bi bi-card-text"></i> 
+                            "{{ category.description|truncatewords:10 }}"
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if products_count > 0 %}
+                    <div class="alert alert-danger shadow-sm mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-shield-exclamation display-6 me-3 flex-shrink-0"></i>
+                            <div>
+                                <h5 class="alert-heading mb-2">Нельзя удалить категорию!</h5>
+                                <p class="mb-0">
+                                    В категории <strong>{{ products_count }}</strong> товаров:
+                                </p>
+                                <ul class="mt-2 mb-0 list-unstyled">
+                                    {% for product in category.products.all|slice:":5" %}
+                                        <li class="py-1">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            {{ product.name }}
+                                            {% if product.price %}
+                                                <span class="badge bg-success ms-2">{{ product.price }} ₽</span>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                    {% if products_count > 5 %}
+                                        <li class="py-1 text-muted">
+                                            <i class="bi bi-three-dots"></i> и ещё {{ products_count|add:"-5" }} товаров...
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <a href="{% url 'catalog:category_list' %}" 
+                           class="btn btn-outline-primary btn-lg px-4">
+                            <i class="bi bi-arrow-left-circle"></i>
+                            Вернуться к списку
+                        </a>
+                    </div>
+
+                {% else %}
+                    <div class="alert alert-warning shadow-sm mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-exclamation-circle-fill me-3 text-warning fs-1 flex-shrink-0"></i>
+                            <div>
+                                <h5 class="alert-heading mb-2">Внимание!</h5>
+                                <p class="mb-0">
+                                    Категория <strong>{{ category.name }}</strong> пуста и будет 
+                                    <strong>необратимо удалена</strong>.
+                                </p>
+                                <hr>
+                                <p class="mb-0 text-muted small">
+                                    ID: {{ category.id }} | Создано: {{ category.created_at|date:"d.m.Y H:i" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="post" class="text-center">
+                        {% csrf_token %}
+                        <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                            <button type="submit" class="btn btn-danger btn-lg px-5 py-2 shadow-sm">
+                                <i class="bi bi-trash3-fill me-2"></i>
+                                <strong>Да, удалить категорию</strong>
+                            </button>
+                            <a href="{% url 'catalog:category_list' %}" 
+                               class="btn btn-secondary btn-lg px-5 py-2 shadow-sm">
+                                <i class="bi bi-x-circle me-2"></i>
+                                <strong>Отмена</strong>
+                            </a>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
